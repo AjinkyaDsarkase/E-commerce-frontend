@@ -1,15 +1,19 @@
-import { NavLink } from "react-router-dom"
+import { NavLink } from "react-router-dom";
 
 function Navbar() {
   return (
     <nav aria-label="Main navigation">
-      <NavLink to='/'>Home</NavLink>
-      <NavLink to='/products'>Products</NavLink>
-      <NavLink to='/wishlist'>Wishlist</NavLink>
-      <NavLink to='/cart'>Cart</NavLink>
-      <NavLink to='/login'>Login</NavLink>
+      <ul className="flex items-center gap-6">
+        <li>
+          <NavLink to="/">Home</NavLink>
+        </li>
+
+        <li>
+          <NavLink to="/products">Products</NavLink>
+        </li>
+      </ul>
     </nav>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;
