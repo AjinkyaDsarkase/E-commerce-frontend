@@ -11,7 +11,7 @@ function Products() {
   const [searchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") ?? "all");
   const [sortBy, setSortBy] = useState("default");
-  const [searchTerm] = useState(searchParams.get("q") ?? "");
+  const searchTerm = searchParams.get("q") ?? "";
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
