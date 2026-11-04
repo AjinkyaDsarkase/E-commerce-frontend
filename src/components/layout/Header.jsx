@@ -1,7 +1,7 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, Link } from "react-router-dom";
 import { FiHeart, FiShoppingCart, FiUser, FiSearch } from "react-icons/fi";
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Navbar from "./Navbar";
 
 function Header() {
@@ -88,25 +88,87 @@ function Header() {
 function GlobalSearch() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef(null);
+  const products = useSelector((state) => state.products.products);
+
+  const suggestions = query.trim().length >= 1
+    ? products
+        .filter((p) => p.title.toLowerCase().includes(query.toLowerCase()))
+        .slice(0, 6)
+    : [];
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   function handleSubmit(e) {
     e.preventDefault();
     if (!query.trim()) return;
     navigate(`/products?q=${encodeURIComponent(query.trim())}`);
     setQuery("");
+    setOpen(false);
+  }
+
+  function handleSelect(id) {
+    navigate(`/products/${id}`);
+    setQuery("");
+    setOpen(false);
   }
 
   return (
-    <form onSubmit={handleSubmit} className="hidden sm:flex items-center">
+    <form onSubmit={handleSubmit} className="hidden sm:flex items-center" ref={wrapperRef}>
       <div className="relative">
         <FiSearch size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
         <input
           type="search"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
+          onFocus={() => setOpen(true)}
           placeholder="Search products..."
           className="w-52 rounded-xl border border-gray-200 bg-gray-50 py-2 pl-8 pr-3 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:bg-white focus:ring-2 focus:ring-gray-100 focus:w-64"
         />
+
+        {/* Dropdown */}
+        {open && suggestions.length > 0 && (
+          <ul className="absolute left-0 top-full z-50 mt-1.5 w-72 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl">
+            {suggestions.map((product) => (
+              <li key={product.id}>
+                <button
+                  type="button"
+                  onClick={() => handleSelect(product.id)}
+                  className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition hover:bg-gray-50"
+                >
+                  <img
+                    src={product.image}
+                    alt={product.title}
+                    className="h-9 w-9 shrink-0 rounded-lg object-contain bg-gray-100 p-1"
+                  />
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-gray-900">{product.title}</p>
+                    <p className="text-xs text-gray-400">${product.price.toFixed(2)}</p>
+                  </div>
+                </button>
+              </li>
+            ))}
+            <li className="border-t border-gray-100">
+              <button
+                type="submit"
+                className="flex w-full items-center justify-center gap-1.5 py-2.5 text-xs font-semibold text-gray-500 transition hover:bg-gray-50 hover:text-gray-900"
+              >
+                <FiSearch size={12} />
+                See all results for &ldquo;{query}&rdquo;
+              </button>
+            </li>
+          </ul>
+        )}
       </div>
     </form>
   );

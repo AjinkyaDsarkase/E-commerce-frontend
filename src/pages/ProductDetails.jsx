@@ -5,6 +5,7 @@ import { FiHeart } from "react-icons/fi";
 import { addToCart } from "../features/cart/cartSlice";
 import { toggleWishlist } from "../features/wishlist/wishlistSlice";
 import { fetchProductById } from "../features/product/productSlice";
+import { useAuthAction } from "../hooks/useAuthAction";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -14,6 +15,7 @@ function ProductDetails() {
   const { selectedProduct, loading, error } = useSelector((state) => state.products);
   const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
   const isWishlisted = wishlistItems.some((item) => item.id === selectedProduct?.id);
+  const authAction = useAuthAction();
 
   useEffect(() => {
     dispatch(fetchProductById(id));
@@ -105,7 +107,7 @@ function ProductDetails() {
             <div className="mt-5 flex gap-3">
               <button
                 type="button"
-                onClick={() => dispatch(addToCart({ ...selectedProduct, quantity }))}
+                onClick={() => authAction(() => dispatch(addToCart({ ...selectedProduct, quantity })))}
                 className="flex-1 rounded-lg bg-gray-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-gray-700"
               >
                 Add to Cart
@@ -113,7 +115,7 @@ function ProductDetails() {
 
               <button
                 type="button"
-                onClick={() => dispatch(toggleWishlist(selectedProduct))}
+                onClick={() => authAction(() => dispatch(toggleWishlist(selectedProduct)))}
                 aria-label="Toggle wishlist"
                 className="rounded-lg border border-gray-300 px-4 py-3 transition hover:bg-gray-100"
               >
