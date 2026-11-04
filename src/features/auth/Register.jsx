@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { FiUser, FiMail, FiLock, FiArrowRight } from "react-icons/fi";
+import { FiUser, FiMail, FiLock, FiArrowRight, FiEye, FiEyeOff } from "react-icons/fi";
 import { registerUser } from "./authSlice";
 
 function Register() {
@@ -9,6 +9,7 @@ function Register() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -27,7 +28,6 @@ function Register() {
   const fields = [
     { id: "name", label: "Full Name", type: "text", placeholder: "John Doe", icon: <FiUser size={16} /> },
     { id: "email", label: "Email address", type: "email", placeholder: "you@example.com", icon: <FiMail size={16} /> },
-    { id: "password", label: "Password", type: "password", placeholder: "••••••••", icon: <FiLock size={16} /> },
   ];
 
   return (
@@ -58,9 +58,7 @@ function Register() {
                   {label}
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
-                    {icon}
-                  </span>
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">{icon}</span>
                   <input
                     id={id}
                     name={id}
@@ -73,6 +71,31 @@ function Register() {
                 </div>
               </div>
             ))}
+
+            {/* Password field with toggle */}
+            <div>
+              <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-gray-700">Password</label>
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><FiLock size={16} /></span>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-10 pr-10 text-sm text-gray-900 outline-none transition focus:border-gray-400 focus:bg-white focus:ring-2 focus:ring-gray-100"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                </button>
+              </div>
+            </div>
 
             <button
               type="submit"
