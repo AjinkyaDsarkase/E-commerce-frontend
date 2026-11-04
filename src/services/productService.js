@@ -1,5 +1,5 @@
 import api from "../api/axiosInstance";
-import { API_ENDPOINTS } from "../api/endPoints";
+import { API_ENDPOINTS } from "../api/endpoints";
 
 export const fetchProductsApi = async (signal) => {
   const response = await api.get( API_ENDPOINTS.PRODUCTS, { signal })
