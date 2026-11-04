@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import { FiTrash2, FiShoppingCart, FiHeart, FiArrowRight } from "react-icons/fi";
 import { removeFromWishlist } from "../features/wishlist/wishlistSlice";
 import { addToCart } from "../features/cart/cartSlice";
+import { useAuthAction } from "../hooks/useAuthAction";
 
 function Wishlist() {
   const dispatch = useDispatch();
   const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
+  const authAction = useAuthAction();
 
   if (wishlistItems.length === 0) {
     return (
@@ -71,10 +73,10 @@ function Wishlist() {
 
                 <button
                   type="button"
-                  onClick={() => {
+                  onClick={() => authAction(() => {
                     dispatch(addToCart({ ...item, quantity: 1 }));
                     dispatch(removeFromWishlist(item.id));
-                  }}
+                  })}
                   className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gray-900 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-gray-700 active:scale-95"
                 >
                   <FiShoppingCart size={14} />
